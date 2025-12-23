@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+
+</head>
+<body>
+<section class="relative w-full min-h-screen">
+    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+         style="background-image: url('{% if event.category.name == 'Education' %}{% static 'images/classroom.png' %}{% elif event.category.name == 'Health & Wellness' %}{% static 'images/hlt2.jpg' %}{% elif event.category.name == 'Islamic Functions' %}{% static 'images/ift2.avif' %}{% elif event.category.name == "Technology" %}{% static 'images/adt.jpg' %}{% elif event.category.name == "Business & Entrepreneurship" %}{% static 'images/adt2.jpg' %}{% elif event.category.name == "Sports & Fitness" %}{% static 'images/std2.jpg' %}{% elif event.category.name == "Arts & Culture" %}{% static 'images/clt4.jpg' %}{% else %}{% static 'images/bg1.jpg' %}{% endif %}');">
+    </div> 
+    
+    <div class="absolute inset-0 
+    {% if event.category.name == 'Education' %}bg-gradient-to-t from-pink-500/60 via-black/50 to-transparent
+                        {% elif event.category.name == "Business & Entrepreneurship" %}bg-gradient-to-t from-red-400/90 via-yellow-800/50 to-transparent
+                        {% elif event.category.name == "Sports & Fitness" %}bg-gradient-to-t from-green-800/90 via-green-400/60 to-transparent
+                        {% elif event.category.name == "Arts & Culture" %}bg-gradient-to-t from-red-800/90 via-red-400/60 to-transparent
+                        {% elif event.category.name == "Technology" %}bg-gradient-to-t from-violet-800/90 via-blue-300/40 to-transparent
+                        {% elif event.category.name == "Health & Wellness" %}bg-gradient-to-t from-blue-400/90 via-green-700/40 to-transparent
+                        {% elif event.category.name == "Islamic Functions" %}bg-gradient-to-t from-fuchsia-900/90 via-green-200/40 to-transparent
+                        {% else %}bg-gradient-to-t from-orange-700/90 via-yellow-400/60 to-transparent {% endif %}
+                        
+    "></div>
+
+    
+    {% include "header.html" %}
+    
+     <main class="flex flex-col md:flex-row justify-between items-center w-full">
+        <div class="ms-24  relative z-10 flex flex-col w-3/5  {% if event.category.name == "Technology" %}backdrop-blur-sm{% endif %}">
+            <h1 class="w-3/4 text-3xl md:text-5xl font-extrabold sm:text-justify mb-0 pt-12 leading-tighter text-white">{{event.name}}</h1>
+            <h1 class="w-3/4 text-xl md:text-2xl font-bold mb-0 leading-tighter mt-2 text-gray-100">at: {{event.location}}</h1>
+            <h2 class="text-sm md:text-lg text-justify font-thin mt-0 mb-0 text-white w-3/5">{{event.description}}</h2>
+
+            <h3 class="text-lg  italic mt-2 mb-8 pb-6 text-white font-mono">{{event.date}} : {{ event.time|date:"g:i A" }}</h3>
+            <div id="countdown" class="flex justify-evenly space-x-2 w-1/2 font-bold">
+                <span id="days" class="text-yellow-400 proportional-nums text-4xl md:text-5xl"></span> <pre class="text-white text-4xl md:text-5xl">:</pre>
+                <span id="hours" class="text-blue-500 proportional-nums text-4xl md:text-5xl"></span> <pre class="text-white text-4xl md:text-5xl">:</pre>
+                <span id="minutes" class="text-red-500 proportional-nums text-4xl md:text-5xl"></span> <pre class="text-white text-4xl md:text-5xl">:</pre>
+                <span id="seconds" class="text-green-600 text-4xl md:text-5xl"></span>
+            </div>
+            <div class="flex justify-evenly space-x-2 w-1/2 text-base md:text-lg font-thin">
+                <span id="days" class="text-yellow-400 proportional-nums">Days</span><pre> </pre>
+                <span id="hours" class="text-blue-500 proportional-nums">Hours</span><pre> </pre>
+                <span id="minutes" class="text-red-500 proportional-nums">Minutes</span><pre> </pre>
+                <span id="seconds" class="text-green-600">Seconds</span>
+            </div>
+   
+        </div>
+
+        <div class="w-2/5 relative z-20 mt-20">
+            <h1 class="text-3xl font-extrabold text-center text-white/50 mb-4">Wanna Participate?</h1>
+            <div class="card border backdrop-blur-sm border-white/25 bg-white/20 rounded-md  w-52  mx-auto shadow-md p-4">
+            <form action="" method="POST" class="w-40 mx-auto">
+                   {% csrf_token %}
+                   {{participant_form.as_p}}
+                   <button class="block mx-auto rounded-md my-4 px-6 py-3 bg-lime-400 shadow-sm" type="submit">Submit</button>
+            </form>
+            
+        </div>
+        <h2 class="text-center font-thin mt-0 mb-0 text-white">Total Participant :  {{event.total_participants}}</h2>
+
+        {% if messages %} 
+               {% for message in messages %}
+               <p class="font-semibold text-center">{{message}}</p>
+               {% endfor %}
+          
+            {% endif %}
+        </div>
+     </main>
+    
+
+    
+    
+       
+    
+
+   
+
+    </section>
+
+    {% comment %} later {% endcomment %}
+
+
+
+    
+
+     
+
+
+        <script src="{% static 'js/countdown.js' %}"></script>
+        <script>
+            startCountdown("{{ event_start_iso }}", "countdown");
+        </script>
+        <script src="{% static 'js/navbar.js' %}"></script>
+
+</body>
+</html>

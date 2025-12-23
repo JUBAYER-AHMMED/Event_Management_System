@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+</head>
+<body>
+    <section class="relative w-full min-h-screen sm:pb-20 md:h-screen">
+    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+         style="background-image: url('{% static 'images/bg5.jpg' %}');"></div>
+    
+    <div class="absolute inset-0 bg-pink-600/60"></div>
+    
+    {% comment %} header  {% endcomment %}
+    {% include "header.html" %}
+    <div class="relative z-10 flex flex-col items-center justify-center  text-center">
+        <h1 class="text-7xl md:text-7xl font-bold mb-0 pt-12 leading-tight text-white/80">Event</h1>
+        <h2 class="text-7xl md:text-8xl font-bold mt-0 mb-0 text-white">Planner</h2>
+        <h3 class="text-lg italic mt-2 mb-8 pb-6 text-white">Smart & Effortless</h3>
+        
+        {% comment %} search form  {% endcomment %}
+             <form method="get"
+                action="{% url 'home' %}#all-events"
+                class="flex gap-3 max-w-xl mx-auto mt-6">
+
+                <input
+                   type="text"
+                   name="q"
+                   value="{{ q|default_if_none:'' }}"
+                   placeholder="Search by name or location..."
+                   class="flex-1 border px-4 py-2 rounded focus:outline-none focus:ring"
+                 >
+
+                 <button class="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600">
+                 Search
+                 </button>
+             </form>
+
+         {% comment %} search form end  {% endcomment %}
+    </div>
+    </section>
+    
+<section class="events">
+   {% block all_events %}
+   
+   {% endblock all_events %}
+</section>
+
+{% include "footer.html" %}
+</body>
+</html>
