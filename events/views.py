@@ -197,10 +197,20 @@ def event_details(request, id):
     if request.method == "POST":
         participant_form = ParticipantModelForm(request.POST)
         if participant_form.is_valid():
-           participant = participant_form.save(commit=False)
-           participant.save()
-           participant.events.add(event)
-           messages.success(request, 'All set! See you at the event.')
+           email = participant_form.cleaned_data['email'].lower()
+           name = participant_form.cleaned_data['name']
+
+           participant, created = Participant.objects.get_or_create(
+               email=email,
+               defaults={'name': name}
+           )
+
+           if participant.events.filter(id=event.id).exists():
+              messages.warning(request, 'You are already registered for this event.')
+           else:
+              participant.events.add(event)
+              messages.success(request, 'All set! See you at the event.')
+
            return redirect('event-details', id)
 
 
