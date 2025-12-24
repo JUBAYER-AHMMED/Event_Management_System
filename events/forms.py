@@ -116,6 +116,9 @@ class ParticipantModelForm(StyledFormMixin, forms.ModelForm):
     class Meta:
         model = Participant
         fields = ['name', 'email']
+    
+    def validate_unique(self):
+        pass
 
     '''using mixing widget'''
     def __init__(self, *arg, **kwarg):
