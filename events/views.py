@@ -7,6 +7,11 @@ from django.utils.timezone import localtime
 from django.db.models import Q,Count, Max,Min,Avg
 from django.contrib import messages
 from django.utils import timezone
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.tokens import default_token_generator
+from django.conf import settings
+from django.core.mail import send_mail
+
 # Create your views here.
 
 from django.db.models import Count
@@ -50,7 +55,7 @@ def organizer(request):
         "event_info" : event_info,
     }
     
-    return render(request, "organizer.html", context)
+    return render(request, "organizer/organizer.html", context)
 
 
 
@@ -221,6 +226,51 @@ def event_details(request, id):
     }
 
     return render(request, "event_details.html", context)
+
+
+def rsvp(request, event_id):
+    event = Event.objects.get(id=event_id)
+    user = request.user
+    name = user.get_username()
+    email = user.email.lower()
+
+    # Create participant object but don't attach to event yet
+    participant, created = Participant.objects.get_or_create(
+        email=email,
+        defaults={'name': name}
+    )
+
+    token = default_token_generator.make_token(participant)
+
+    activation_url = f"{settings.FRONTEND_URL}/events/rsvp-confirm/{participant.id}/{event.id}/{token}/"
+
+    subject = "Confirm Your RSVP"
+    message = f"Hi {name},\nPlease confirm your RSVP by clicking the link below:\n{activation_url}"
+    send_mail(subject, message, settings.EMAIL_HOST_USER, [email])
+
+    messages.success(request, "Confirmation email sent! Please check your inbox.")
+    return redirect('event-details', id=event.id)
+
+def confirm_rsvp(request, participant_id, event_id, token):
+    try:
+        participant = Participant.objects.get(id=participant_id)
+        event = Event.objects.get(id=event_id)
+
+        if default_token_generator.check_token(participant, token):
+            if not participant.events.filter(id=event.id).exists():
+                participant.events.add(event)
+                messages.success(request, f"RSVP confirmed! See you at {event.name}.")
+            else:
+                messages.warning(request, "You have already confirmed RSVP for this event.")
+            return redirect('event-details', id=event.id)
+        else:
+            return HttpResponse("Invalid or expired RSVP link.")
+
+    except Participant.DoesNotExist:
+        return HttpResponse("Participant not found.")
+    except Event.DoesNotExist:
+        return HttpResponse("Event not found.")
+
 
 
 

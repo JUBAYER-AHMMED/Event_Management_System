@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Management</title>
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    {% comment %} <link rel="stylesheet" href="{% static 'css/output.css' %}"> {% endcomment %}
 </head>
 <body>
     <section class="relative w-full min-h-screen sm:pb-20 md:h-screen">
@@ -15,13 +17,19 @@
     <div class="absolute inset-0 bg-pink-600/60"></div>
     
     {% comment %} header  {% endcomment %}
-    {% include "header.html" %}
+    {% if request.user.is_authenticated %}
+       {% include "pure.html" %}
+    {% else %}
+       {% include "non_logged_header.html" %}
+    {% endif %}
+    
     <div class="relative z-10 flex flex-col items-center justify-center  text-center">
         <h1 class="text-7xl md:text-7xl font-bold mb-0 pt-12 leading-tight text-white/80">Event</h1>
         <h2 class="text-7xl md:text-8xl font-bold mt-0 mb-0 text-white">Planner</h2>
         <h3 class="text-lg italic mt-2 mb-8 pb-6 text-white">Smart & Effortless</h3>
-        
-        {% comment %} search form  {% endcomment %}
+
+        {% if request.user.is_authenticated %}
+            {% comment %} search form  {% endcomment %}
              <form method="get"
                 action="{% url 'home' %}#all-events"
                 class="flex gap-3 max-w-xl mx-auto mt-6">
@@ -40,14 +48,25 @@
              </form>
 
          {% comment %} search form end  {% endcomment %}
+        {% else %}
+            <h3 class="text-white text-center text-2xl mt-6">Please SignUp or SignIn to explore.</h3>
+            <p class="text-white text-center">Thank You</p>
+        {% endif %}
+        
+        
     </div>
     </section>
     
-<section class="events">
-   {% block all_events %}
-   
-   {% endblock all_events %}
-</section>
+
+    {% if request.user.is_authenticated %}
+        <section class="events">
+            {% block all_events %}
+            
+            {% endblock all_events %}
+        </section>
+    {% endif %}
+
+
 
 {% include "footer.html" %}
 </body>
