@@ -86,7 +86,8 @@
         {% comment %} <li>{{event.category}}</li> {% endcomment %}
         <a href="{% url 'event-details' event.id %}" target="">
             <div class="relative w-64 h-72 rounded-3xl overflow-hidden bg-cover bg-center"
-            style="background-image: url('{% if event.category.name == 'Education' %}{% static 'images/classroom.png' %}{% elif event.category.name == 'Health & Wellness' %}{% static 'images/hlt2.jpg' %}{% elif event.category.name == 'Islamic Functions' %}{% static 'images/ift2.avif' %}{% elif event.category.name == "Technology" %}{% static 'images/adt.jpg' %}{% elif event.category.name == "Business & Entrepreneurship" %}{% static 'images/adt2.jpg' %}{% elif event.category.name == "Sports & Fitness" %}{% static 'images/std2.jpg' %}{% elif event.category.name == "Arts & Culture" %}{% static 'images/clt4.jpg' %}{% else %}{% static 'images/bg1.jpg' %}{% endif %}');">
+            style="background-image: url('{% if event.asset and event.asset.url %}{{event.asset.url}}{% else %}{{ MEDIA_URL }}default_img.jpg{% endif %}');">
+            {% comment %} style="background-image: url('{% if event.asset %}{{event.asset.url}}{% else %}{% static "images/bg1.jpg" %}{% endif %}');"> {% endcomment %}
 
             
             <div class="absolute bottom-0 left-0 w-full h-2/3
@@ -103,7 +104,7 @@
 
             
             <div class="absolute bottom-4 left-4 right-4 text-white text-sm font-semibold">
-                <h1 class="title w-62 text-xl tracking-tighter font-medium">{{ event.name }}</h1> 
+                <h1 class="title w-62 text-xl tracking-tighter font-medium">{{ event.name }}</h1>
 
                 <div class="bottom_portion mt-2 flex justify-between">
                     <div class="bl flex items-center gap-3">
@@ -147,6 +148,6 @@
 </div>
 
 <script src="{% static 'js/filters.js' %}"></script>
-<script src="{% static 'js/navbar.js' %}"></script>
+
 
 {% endblock all_events %}

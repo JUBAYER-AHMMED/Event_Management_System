@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static "css/output.css" %}" />
+    {% comment %} <script src="https://cdn.tailwindcss.com"></script> {% endcomment %}
+  
+</head>
+  <body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+    {% include "logged_header.html" %}
+
+    {% if messages %}
+    <ul>
+      {% for message in messages %}
+        <li class="bg-green-500 text-white px-1 py-2 text-center">{{message}}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <main class="my-6">
+        {% block content %}
+            {% include "admin/user_list.html" %}
+        {% endblock content %}
+    </main>
+    {% comment %} {% include "footer.html" %} {% endcomment %}
+    <script>
+      document
+        .getElementById("menu-toggle")
+        .addEventListener("click", function () {
+          document.getElementById("mobile-menu").classList.toggle("hidden");
+        });
+
+      document
+        .getElementById("user-menu-button")
+        .addEventListener("click", function () {
+          document.getElementById("user-menu").classList.toggle("hidden");
+        });
+
+      // Close the dropdown when clicking outside
+      window.addEventListener("click", function (e) {
+        if (!document.getElementById("user-menu-button").contains(e.target)) {
+          document.getElementById("user-menu").classList.add("hidden");
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -5,12 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Organizer</title>
+    {% comment %} <script src="https://cdn.tailwindcss.com"></script> {% endcomment %}
+
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
 
 </head>
 <body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
     
-    {% include "header_org.html" %}
+    {% include "logged_header.html" %}
 
     <main>
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 m-4">
@@ -199,7 +201,17 @@
             <div class="hidden md:block">{{event.date}}</div>
             <div class="hidden md:block">{{event.time}}</div>
             <div class="hidden md:block">{{event.category.name}}</div>
-            <div class="hidden lg:block text-center">{{event.total_participants}}</div>
+            <div class="hidden lg:block text-center">
+              <h2>{{event.total_participants}}</h2>
+              <a href="{% url "events-with-participants" %}" class="flex justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-yellow-400 fill-blue-500 stroke-gray-800 hover:fill-green-400">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+              </a>
+
+
+            </div>
             <div class="">
               <a href="{% url "update-event"  event.id %}" class="px-3 md:px-5  py-1 bg-blue-500/40 hover:bg-blue-600 hover:text-white">Edit</a>
             </div>
@@ -228,6 +240,8 @@
         </div>
         </a>
     </main>
+
+    {% include "footer.html" %}
 
 
     <script src="{% static 'js/navbar.js' %}"></script>
