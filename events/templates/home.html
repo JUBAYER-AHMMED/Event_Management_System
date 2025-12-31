@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Management</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    {% comment %} <script src="https://cdn.tailwindcss.com"></script> {% endcomment %}
 
-    {% comment %} <link rel="stylesheet" href="{% static 'css/output.css' %}"> {% endcomment %}
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
 </head>
 <body>
     <section class="relative w-full min-h-screen sm:pb-20 md:h-screen">
@@ -18,7 +18,7 @@
     
     {% comment %} header  {% endcomment %}
     {% if request.user.is_authenticated %}
-       {% include "pure.html" %}
+       {% include "logged_header.html" %}
     {% else %}
        {% include "non_logged_header.html" %}
     {% endif %}
@@ -64,7 +64,9 @@
             
             {% endblock all_events %}
         </section>
+        {% include "all_rsvp_events.html" %}
     {% endif %}
+    
 
 
 

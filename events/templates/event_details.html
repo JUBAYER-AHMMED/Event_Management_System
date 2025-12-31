@@ -6,12 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Details</title>
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
+        {% comment %} <script src="https://cdn.tailwindcss.com"></script> {% endcomment %}
+
 
 </head>
 <body>
 <section class="relative w-full min-h-screen">
     <div class="absolute inset-0 bg-cover bg-center bg-no-repeat"
-         style="background-image: url('{% if event.category.name == 'Education' %}{% static 'images/classroom.png' %}{% elif event.category.name == 'Health & Wellness' %}{% static 'images/hlt2.jpg' %}{% elif event.category.name == 'Islamic Functions' %}{% static 'images/ift2.avif' %}{% elif event.category.name == "Technology" %}{% static 'images/adt.jpg' %}{% elif event.category.name == "Business & Entrepreneurship" %}{% static 'images/adt2.jpg' %}{% elif event.category.name == "Sports & Fitness" %}{% static 'images/std2.jpg' %}{% elif event.category.name == "Arts & Culture" %}{% static 'images/clt4.jpg' %}{% else %}{% static 'images/bg1.jpg' %}{% endif %}');">
+         style="background-image: url('{% if event.asset and event.asset.url %}{{event.asset.url}}{% else %}{{ MEDIA_URL }}default_img.jpg{% endif %}');">
+
+         {% comment %} style="background-image: url('{% if event.category.name == 'Education' %}{% static 'images/classroom.png' %}{% elif event.category.name == 'Health & Wellness' %}{% static 'images/hlt2.jpg' %}{% elif event.category.name == 'Islamic Functions' %}{% static 'images/ift2.avif' %}{% elif event.category.name == "Technology" %}{% static 'images/adt.jpg' %}{% elif event.category.name == "Business & Entrepreneurship" %}{% static 'images/adt2.jpg' %}{% elif event.category.name == "Sports & Fitness" %}{% static 'images/std2.jpg' %}{% elif event.category.name == "Arts & Culture" %}{% static 'images/clt4.jpg' %}{% else %}{% static 'images/bg1.jpg' %}{% endif %}');"> {% endcomment %}
     </div> 
     
     <div class="absolute inset-0 
@@ -27,7 +31,7 @@
     "></div>
 
     
-    {% include "header.html" %}
+    {% include "logged_header.html" %}
     
      <main class="flex flex-col md:flex-row justify-between items-center w-full">
         <div class="ms-24  relative z-10 flex flex-col w-3/5  {% if event.category.name == "Technology" %}backdrop-blur-sm{% endif %}">
@@ -53,24 +57,13 @@
 
         <div class="w-2/5 relative z-20 mt-20">
             <h1 class="text-3xl font-extrabold text-center text-white/80 mb-2 ">Wanna Participate?</h1>
-            <div class="flex justify-center">
-                <form method="POST" action="{% url "rsvp" event.id %} ">
-                        {% csrf_token %}
-                        <button type="submit" class="px-2 py-1 bg-white/30 backdrop-blur-sm rounded text-white text-center font-semibold border border-white/50">
-                            RSVP
-                        </button>
-                        
-                </form>
-
-            </div>
-            <p class="z-20 text-white text-center">Or</p>
-            <div class="card border backdrop-blur-sm border-white/25 bg-white/20 rounded-md  w-52  mx-auto shadow-md p-4">
-            <form action="" method="POST" class="w-40 mx-auto">
-                   {% csrf_token %}
-                   {{participant_form.as_p}}
-                   <button class="block mx-auto rounded-md my-4 px-6 py-3 bg-lime-400 shadow-sm" type="submit">Submit</button>
-            </form>
-            
+            <div class="card border backdrop-blur-sm border-white/25 bg-white/20 rounded-md  w-52 mx-auto shadow-md px-4 py-6">
+            <form method="POST" action="{% url "rsvp" event.id %}" class=" flex justify-center">
+                {% csrf_token %}
+                    <button type="submit" class="px-2 py-1 bg-lime-500/60 backdrop-blur-sm rounded text-white text-center font-semibold border border-white/50">
+                        RSVP
+                    </button>   
+            </form>   
         </div>
         <h2 class="text-center font-thin mt-0 mb-0 text-white">Total Participant :  {{event.total_participants}}</h2>
 

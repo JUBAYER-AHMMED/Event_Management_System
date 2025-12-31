@@ -1,93 +1,25 @@
-{% extends "home.html" %}
+
 {% load static %}
 
-{% block all_events %}
-<div id="all-events" class="container mx-auto my-4 border flex flex-col items-center min-h-screen">
-    <h1 class="text-center text-5xl font-bold">ALL EVENTS</h1>
-    {% comment %} filter  {% endcomment %}
-        <form method="get" id="filterForm" class="flex gap-6 my-6" action="{% url 'home' %}#all-events">
-         
 
 
-          {% comment %} filter form start  {% endcomment %}
-          
-          <div class="w-40 space-y-2">
-            <button type="button"
-                onclick="togglePanel('categoryPanel')"
-                class="w-full border px-3 py-2 rounded">
-            Category
-            </button>
-
-            <button type="button"
-                onclick="togglePanel('datePanel')"
-                class="w-full border px-3 py-2 rounded">
-            Date
-            </button>
-          </div>
-
-          <div class="flex-1 border rounded p-4">
-          <div id="placeholderPanel" class="text-gray-400 text-sm text-center ">
-             Select a filter on the left to begin
-          </div>
-
-          {% comment %} category diye filter  {% endcomment %}
-
-            <div id="categoryPanel" class="hidden">
-                <h4 class="font-semibold mb-2">Select Categories</h4>
-
-                {% for category in categories %}
-                  <label>
-                    <input
-                        type="checkbox"
-                        name="categories"
-                        value="{{ category.id }}"
-                        {% if category.id|stringformat:"s" in selected_categories %}checked{% endif %}
-                    >
-                        {{ category.name }}
-                  </label>
-                {% endfor %}
-
-            </div>
-            {% comment %} date diye filter  {% endcomment %}
-          <div id="datePanel" class="hidden">
-            <h4 class="font-semibold mb-2">Select Date Range</h4>
-
-            <div class="flex gap-4">
-                <input type="date" name="start_date"
-                       value="{{ request.GET.start_date }}"
-                       class="border p-2 rounded">
-
-                <input type="date" name="end_date"
-                       value="{{ request.GET.end_date }}"
-                       class="border p-2 rounded">
-            </div>
-          </div>
-
-          </div>
-
-          <div class="flex items-end">
-            <button class="bg-black text-white px-6 py-2 rounded">
-                Apply
-            </button>
-          </div>
-
-        </form>
-         {% comment %} search result {% endcomment %}
-              {% if q %}
-              <p class="text-sm text-gray-500 mt-2 text-center">
-               Showing results for "<strong>{{ q }}</strong>"
-              </p>
-              {% endif %}
-
-
-    {% comment %} end filter  {% endcomment %}
+<section class="rsvp_events my-6">
+            
+        
+<div id="rsvp_events" class="container mx-auto my-8 border rounded flex flex-col items-center min-h-[50vh]">
+    <h1 class="text-center font-bold 
+        bg-gradient-to-r  from-slate-700 via-red-400 to-black
+          bg-clip-text text-transparent text-4xl md:text-5xl  mt-8 mb-5 md:mb-8 pb-5
+    ">RSVP EVENTS</h1>
+    {% if rsvp_events.exists %}
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 my-2">
-        {% for event in events %}
+        {% for event in rsvp_events %}
         {% comment %} <li>{{event.category}}</li> {% endcomment %}
         <a href="{% url 'event-details' event.id %}" target="">
             <div class="relative w-64 h-72 rounded-3xl overflow-hidden bg-cover bg-center"
             style="background-image: url('{% if event.asset and event.asset.url %}{{event.asset.url}}{% else %}{{ MEDIA_URL }}default_img.jpg{% endif %}');">
-            {% comment %} style="background-image: url('{% if event.asset %}{{event.asset.url}}{% else %}{% static "images/bg1.jpg" %}{% endif %}');"> {% endcomment %}
+
+            {% comment %} style="background-image: url('{% if event.category.name == 'Education' %}{% static 'images/classroom.png' %}{% elif event.category.name == 'Health & Wellness' %}{% static 'images/hlt2.jpg' %}{% elif event.category.name == 'Islamic Functions' %}{% static 'images/ift2.avif' %}{% elif event.category.name == "Technology" %}{% static 'images/adt.jpg' %}{% elif event.category.name == "Business & Entrepreneurship" %}{% static 'images/adt2.jpg' %}{% elif event.category.name == "Sports & Fitness" %}{% static 'images/std2.jpg' %}{% elif event.category.name == "Arts & Culture" %}{% static 'images/clt4.jpg' %}{% else %}{% static 'images/bg1.jpg' %}{% endif %}');"> {% endcomment %}
 
             
             <div class="absolute bottom-0 left-0 w-full h-2/3
@@ -104,7 +36,7 @@
 
             
             <div class="absolute bottom-4 left-4 right-4 text-white text-sm font-semibold">
-                <h1 class="title w-62 text-xl tracking-tighter font-medium">{{ event.name }}</h1>
+                <h1 class="title w-62 text-xl tracking-tighter font-medium">{{ event.name }}</h1> 
 
                 <div class="bottom_portion mt-2 flex justify-between">
                     <div class="bl flex items-center gap-3">
@@ -144,10 +76,12 @@
             </div>
         </a>
         {% endfor %}
+        
     </div>
+    {% else %}
+    <h2 class="text-2xl mb-8 text-center">Click on Specific Event & <br> Then
+        Select RSVP To Specific Event in EventDetails page.</h2>
+    {% endif %}
 </div>
 
-<script src="{% static 'js/filters.js' %}"></script>
-
-
-{% endblock all_events %}
+</section>
