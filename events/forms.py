@@ -1,5 +1,5 @@
 from django import forms
-from events.models import Event,Participant,Category
+from events.models import Event,Category
 
 
 class StyledFormMixin:
@@ -88,7 +88,7 @@ class StyledFormMixin2:
 class EventModelForm(StyledFormMixin2, forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['name', 'description','date','time','location','category']
+        fields = ['name', 'description','date','time','location','category','asset']
         widgets={
             'date': forms.SelectDateWidget(),
             'category': forms.RadioSelect(),
@@ -112,16 +112,16 @@ class CategoryModelForm(StyledFormMixin2, forms.ModelForm):
 
 
 
-class ParticipantModelForm(StyledFormMixin, forms.ModelForm):
-    class Meta:
-        model = Participant
-        fields = ['name', 'email']
+# class ParticipantModelForm(StyledFormMixin, forms.ModelForm):
+#     class Meta:
+#         model = Participant
+#         fields = ['name', 'email']
     
-    def validate_unique(self):
-        pass
+#     def validate_unique(self):
+#         pass
 
-    '''using mixing widget'''
-    def __init__(self, *arg, **kwarg):
-        super().__init__(*arg, **kwarg)
-        self.apply_styled_widgets()
+#     '''using mixing widget'''
+#     def __init__(self, *arg, **kwarg):
+#         super().__init__(*arg, **kwarg)
+#         self.apply_styled_widgets()
 
