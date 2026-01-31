@@ -7,20 +7,28 @@ from django.utils.timezone import localtime
 from django.db.models import Q,Count, Max,Min,Avg
 from django.contrib import messages
 from django.utils import timezone
-from django.contrib.auth.models import User, Group
+# from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.contrib.auth.tokens import default_token_generator
 from django.conf import settings
 from django.core.mail import send_mail
-from django.contrib.auth.decorators import login_required,permission_required
+from django.contrib.auth.decorators import login_required,permission_required, user_passes_test
+from django.utils.decorators import method_decorator
 
-
+from users.models import CustomUser
+from django.contrib.auth import get_user_model
+User = get_user_model()
 # Create your views here.
 
 from django.db.models import Count
 from django.utils import timezone
 from datetime import datetime
 
+#class based view
+from django.views import View
+from django.views.generic import ListView,DetailView,UpdateView,DeleteView,CreateView
 
+from django.urls import reverse_lazy
 
 
 def home(request):
@@ -110,6 +118,50 @@ def organizer(request):
     
     return render(request, "organizer/organizer.html", context)
 
+organizer_decorators = [login_required, permission_required("events.add_event", login_url='no_permission')]
+@method_decorator(organizer_decorators, name='dispatch')
+class OrganizerView(ListView):
+    model = Event
+    template_name = "organizer/organizer.html"
+    context_object_name = "events"
+
+    def get_queryset(self):
+        type = self.request.GET.get("type", "today")
+        now = timezone.now().date()
+
+        base_query = (
+            Event.objects
+            .select_related("category")
+            .prefetch_related("participants_users")
+            .annotate(total_participants=Count("participants_users", distinct=True))
+        )
+
+        if type == "all":
+            return base_query.all()
+        elif type == "past_events":
+            return base_query.filter(date__lt=now)
+        elif type == "upcoming_events":
+            return base_query.filter(date__gt=now)
+        else:  # today
+            return base_query.filter(date=now)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        now = timezone.now().date()
+        type = self.request.GET.get("type", "today")
+
+        context["event_info"] = type
+
+        context["counts"] = Event.objects.aggregate(
+            total_events=Count("id", distinct=True),
+            total_upcoming_events=Count("id", filter=Q(date__gt=now), distinct=True),
+            total_past_events=Count("id", filter=Q(date__lt=now), distinct=True),
+            total_participants=Count("participants_users", distinct=True),
+        )
+
+        return context
+
 
 
 @login_required
@@ -132,6 +184,23 @@ def create_event(request):
     context = {"event_form": event_form , 'e':e}
     return render(request, "event_form.html", context)
 
+add_event_decorators = [login_required, permission_required("events.add_event", login_url='no_permission')]
+@method_decorator(add_event_decorators, name='dispatch')
+class CreateEvent(CreateView):
+    model = Event
+    template_name = 'event_form.html'
+    form_class = EventModelForm
+    success_url = reverse_lazy("create-event")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["e"] = "create"
+        context["event_form"] = context['form']
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, "Event created successfully!")
+        return super().form_valid(form)
 
 
 @login_required

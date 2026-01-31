@@ -1,11 +1,14 @@
 from django import forms
 import re 
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User, Group, Permission
+# from django.contrib.auth.models import User, Group, Permission
+from django.contrib.auth.models import Group, Permission
 from events.forms import StyledFormMixin
 
-from django.contrib.auth.forms import AuthenticationForm
-
+from django.contrib.auth.forms import AuthenticationForm,PasswordChangeForm,PasswordResetForm,SetPasswordForm
+from users.models import CustomUser
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 class StyledFormMixin2:
     default_classes = (
@@ -77,6 +80,54 @@ class StyledFormMixin4:
                 )
             })
 
+
+
+class StyledFormMixin5:
+    """Mixing to apply style"""
+    def __init__(self,*arg,**kwarg):
+        super().__init__(*arg, **kwarg)
+        self.apply_styled_widgets()
+    default_classes = "border-2 border-gray-300 p-1 w-full rounded-lg shadow-sm focus:border-rose-500 focus:ring-rose-500"
+
+    def apply_styled_widgets(self):
+        for field_name,field in self.fields.items():
+            if isinstance(field.widget, forms.TextInput):
+                field.widget.attrs.update({
+                    'class': f"{self.default_classes} bg-gray-200 ",
+                    'placeholder': f"Enter {field.label.lower()}"
+                })
+            elif isinstance(field.widget,forms.Textarea):
+                field.widget.attrs.update({
+                    'class': self.default_classes,
+                    'placeholder': f"Enter {field.label.lower()}",
+                    'rows':5
+                }) 
+            elif isinstance(field.widget,forms.SelectDateWidget):
+                # print("I am called!")
+                field.widget.attrs.update({
+                    'class': "border-2 border-gray-300 p-1 rounded-lg shadow-sm focus:border-rose-500 focus:ring-rose-500",
+                }) 
+            elif isinstance(field.widget,forms.CheckboxSelectMultiple):
+                field.widget.attrs.update({
+                    'class': " p-1 rounded-lg "
+                })
+
+class StyledFormMixin6:
+    default_classes = (
+        "border-2 border-gray-300 p-1 w-full rounded-lg shadow-sm "
+        "focus:border-rose-500 focus:ring-rose-500"
+    )
+
+    def apply_styled_widgets(self):
+        for field_name, field in self.fields.items():
+            classes = self.default_classes
+      
+            if field_name == "username":
+                classes += " bg-rose-200"
+            
+            label = field.label if field.label else field_name.replace('_', ' ')
+            field.widget.attrs['placeholder'] = f"Enter {label.lower()}"
+            field.widget.attrs["class"] = classes
 
 
 class CustomRegistraionForm(StyledFormMixin,forms.ModelForm):
@@ -159,4 +210,28 @@ class CreateGroupForm(StyledFormMixin2, forms.ModelForm):
       model = Group
       fields = ['name', 'permissions']
   
+
+class EditProfileForm(StyledFormMixin5, forms.ModelForm):
+   class Meta:
+      model = CustomUser
+      fields = ['email','first_name', 'last_name','bio','profile_image','phone_no']
+    
+
+
+#password change forms
+
+class CustomPasswordChangeForm(StyledFormMixin6,PasswordChangeForm):
+   def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)   # AuthenticationForm init FIRST
+        self.apply_styled_widgets()  
+
+class CustomPasswordResetForm(StyledFormMixin6,PasswordResetForm):
+   def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)   # AuthenticationForm init FIRST
+        self.apply_styled_widgets()
+        
+class CustomPasswordResetConfirmForm(StyledFormMixin6,SetPasswordForm):
+   def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)   # AuthenticationForm init FIRST
+        self.apply_styled_widgets()  
 
