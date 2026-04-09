@@ -30,53 +30,78 @@ from django.views.generic import ListView,DetailView,UpdateView,DeleteView,Creat
 
 from django.urls import reverse_lazy
 
+from django.db.models import Count, Q
+from django.shortcuts import render
+from .models import Event, Category   # Make sure both are imported
 
 def home(request):
-    if request.user.is_authenticated:
-        events = (
-            Event.objects
-            .select_related('category')
-            .prefetch_related('participants_users')
-            .annotate(total_participants=Count('participants_users', distinct=True))
-            .order_by('date')
+    if not request.user.is_authenticated:
+        return render(request, 'home.html')
+
+    # Base queryset with optimizations
+    events = (
+        Event.objects
+        .select_related('category')
+        .prefetch_related('participants_users')
+        .annotate(total_participants=Count('participants_users', distinct=True))
+        .order_by('date')
+    )
+
+    upcoming_events = Event.objects.filter(
+        date__gte=timezone.now().date()
+    ).order_by('date')[:8]
+
+    # Get search query
+    q = request.GET.get('q')
+
+    # Get filter values
+    selected_categories = request.GET.getlist('categories')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    # Apply Search
+    if q:
+        events = events.filter(
+            Q(name__icontains=q) |
+            Q(location__icontains=q)
         )
+
+    # Apply Category Filter (Fixed)
+    if selected_categories:
+        # Safely convert to integers
         try:
-            rsvp_events = Event.objects.select_related('category').filter(participants_users=request.user)
-        except:
-            rsvp_events = Event.objects.none()
-        
-        q = request.GET.get('q')
-        if q:
-            events = events.filter(
-                Q(name__icontains=q) |
-                Q(location__icontains=q)
-            )
+            cat_ids = [int(cid) for cid in selected_categories if cid.strip().isdigit()]
+            if cat_ids:
+                events = events.filter(category_id__in=cat_ids)
+        except (ValueError, TypeError):
+            pass
 
-        selected_categories = request.GET.getlist('categories')
-        start_date = request.GET.get('start_date')
-        end_date = request.GET.get('end_date')
+    # Apply Date Filters
+    if start_date:
+        events = events.filter(date__gte=start_date)
+    if end_date:
+        events = events.filter(date__lte=end_date)
 
-        if selected_categories:
-            events = events.filter(category_id__in=selected_categories)
+    # Get RSVP events for the logged-in user
+    try:
+        rsvp_events = Event.objects.select_related('category').filter(
+            participants_users=request.user
+        )
+    except:
+        rsvp_events = Event.objects.none()
 
-        if start_date:
-            events = events.filter(date__gte=start_date)
+    context = {
+        'events': events,
+        'categories': Category.objects.all(),
+        'selected_categories': selected_categories,   # Important: list of strings
+        'start_date': start_date,
+        'end_date': end_date,
+        'q': q,
+        'rsvp_events': rsvp_events,
+        'upcoming_events': upcoming_events,
+    }
 
-        if end_date:
-            events = events.filter(date__lte=end_date)
-
-        return render(request, 'all_events.html', {
-            'events': events,
-            'categories': Category.objects.all(),
-            'selected_categories': selected_categories,
-            'start_date': start_date,
-            'end_date': end_date,
-            'q': q,
-            'rsvp_events':rsvp_events,
-        })
-    return render(request, 'home.html')
-
-
+    return render(request, 'all_events.html', context)
 
 @login_required
 @permission_required("events.add_event", login_url='no_permission')

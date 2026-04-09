@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
 </head>
 <body>
-    <section class="relative w-full min-h-screen sm:pb-20 md:h-screen">
+    <section class="relative w-full sm:pb-20">
     <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" 
          style="background-image: url('{% static 'images/bg5.jpg' %}');"></div>
     
@@ -32,14 +32,14 @@
             {% comment %} search form  {% endcomment %}
              <form method="get"
                 action="{% url 'home' %}#all-events"
-                class="flex gap-3 max-w-xl mx-auto mt-6">
+                class="flex gap-3 max-w-xl mx-auto mt-4">
 
                 <input
                    type="text"
                    name="q"
                    value="{{ q|default_if_none:'' }}"
                    placeholder="Search by name or location..."
-                   class="flex-1 border px-4 py-2 rounded focus:outline-none focus:ring"
+                   class="flex-1 border px-4 py-4 rounded focus:outline-none focus:ring"
                  >
 
                  <button class="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600">
@@ -65,9 +65,11 @@
             {% endblock all_events %}
         </section>
         {% include "all_rsvp_events.html" %}
+        {% include 'stats_counter.html' %}
+
+        {% include 'hero_banner.html' %}
     {% endif %}
     
-
 
 
 {% include "footer.html" %}

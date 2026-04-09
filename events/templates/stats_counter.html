@@ -1,0 +1,61 @@
+<section style="width: 100%; padding: 1.5rem 1rem">
+  <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem">
+    <div class="bg-gray-50 rounded-xl p-5 text-center">
+      <p
+        class="text-3xl font-bold text-gray-900 counter"
+        data-target="500"
+        data-suffix="+"
+      >
+        0
+      </p>
+      <p class="text-xs text-gray-400 mt-1">Events hosted</p>
+    </div>
+
+    <div class="bg-gray-50 rounded-xl p-5 text-center">
+      <p
+        class="text-3xl font-bold text-gray-900 counter"
+        data-target="10"
+        data-suffix="K+"
+      >
+        0
+      </p>
+      <p class="text-xs text-gray-400 mt-1">Registered users</p>
+    </div>
+
+    <div class="bg-gray-50 rounded-xl p-5 text-center">
+      <p
+        class="text-3xl font-bold text-gray-900 counter"
+        data-target="12"
+        data-suffix=""
+      >
+        0
+      </p>
+      <p class="text-xs text-gray-400 mt-1">Categories</p>
+    </div>
+
+    <div class="bg-gray-50 rounded-xl p-5 text-center">
+      <p
+        class="text-3xl font-bold text-gray-900 counter"
+        data-target="32"
+        data-suffix="+"
+      >
+        0
+      </p>
+      <p class="text-xs text-gray-400 mt-1">Cities covered</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll(".counter").forEach((el) => {
+    const target = +el.dataset.target;
+    const suffix = el.dataset.suffix;
+    let current = 0;
+    const step = Math.ceil(target / 40);
+    const timer = setInterval(() => {
+      current = Math.min(current + step, target);
+      el.textContent = current + suffix;
+      if (current >= target) clearInterval(timer);
+    }, 30);
+  });
+</script>

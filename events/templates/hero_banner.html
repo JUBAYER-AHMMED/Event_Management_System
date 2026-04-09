@@ -1,0 +1,103 @@
+<section
+  style="
+    position: relative;
+    background: #000;
+    border-radius: 16px;
+    margin: 1.5rem 1rem;
+    overflow: hidden;
+    min-height: 480px;
+  "
+>
+  <div
+    style="
+      position: absolute;
+      inset: 0;
+      opacity: 0.4;
+      background-image: radial-gradient(circle, #333 1px, transparent 1px);
+      background-size: 28px 28px;
+    "
+  ></div>
+
+  <div
+    style="
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 6rem 1.5rem;
+    "
+  >
+    <span
+      style="
+        display: inline-block;
+        border: 0.5px solid #444;
+        color: #999;
+        font-size: 12px;
+        letter-spacing: 0.05em;
+        padding: 4px 16px;
+        border-radius: 20px;
+        margin-bottom: 1.5rem;
+      "
+    >
+      Bangladesh's #1 Event Platform
+    </span>
+
+    <h1
+      style="
+        color: #fff;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 700;
+        line-height: 1.15;
+        max-width: 600px;
+        margin: 0 auto 1rem;
+      "
+    >
+      Discover & join events that matter to you
+    </h1>
+
+    <p
+      style="
+        color: #888;
+        font-size: 1rem;
+        max-width: 420px;
+        margin: 0 auto 2rem;
+        line-height: 1.6;
+      "
+    >
+      From tech conferences to cultural festivals — find, register, and
+      experience the best events near you.
+    </p>
+
+    <div
+      style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap"
+    >
+      <a
+        href="{% url 'home' %}"
+        style="
+          background: #fff;
+          color: #000;
+          padding: 12px 28px;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 500;
+          text-decoration: none;
+        "
+      >
+        Browse events
+      </a>
+      <a
+        href="#"
+        style="
+          border: 0.5px solid #555;
+          color: #fff;
+          padding: 12px 28px;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 500;
+          text-decoration: none;
+        "
+      >
+        Create an event
+      </a>
+    </div>
+  </div>
+</section>
