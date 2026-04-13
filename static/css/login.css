@@ -112,12 +112,11 @@ body {
    color: red; 
 } */
 
-.choto{
+.choto {
   /* border: 1px solid red ; */
   display: flex;
   flex-direction: column;
   align-items: center;
-
 }
 .choto p {
   display: flex;
@@ -234,4 +233,9 @@ body {
 }
 .container.active .toggle-right {
   transform: translateX(200%);
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
